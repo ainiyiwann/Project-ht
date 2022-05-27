@@ -34,7 +34,7 @@ const actions = {
     const { username, password } = userInfo
     //发请求
     let result = await login({ username: username.trim(), password: password })
-    console.log(result)
+    // console.log(result)
     if(result.code==20000){
       commit('SET_TOKEN',result.data.token)
       //将数据进行Cookies储存

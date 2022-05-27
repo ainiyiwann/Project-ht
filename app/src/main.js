@@ -35,6 +35,11 @@ Vue.use(ElementUI, { locale })
 
 Vue.config.productionTip = false
 
+//引入相关API请求接口
+import API from '@/api/index'
+//挂载到原型上
+Vue.prototype.$API = API
+
 new Vue({
   el: '#app',
   router,
