@@ -8,3 +8,23 @@ export const reqTradeMarkList = (page,limit)=>{
         method:'get'
     })
 }
+
+//处理添加品牌 地址：/admin/product/baseTrademark/save POST 有参 无id
+//修改品牌 地址:/admin/product/baseTrademark/update PUT 有参 有id
+export const reqAddOrUpdateTradeMark = (tradeMark)=>{
+    //如果服务器数据又ID则为修改
+    if(tradeMark.id){
+        return request({
+            url:'/admin/product/baseTrademark/update',
+            method:'PUT',
+            data:tradeMark
+        })
+    }else{
+        //如果没有id则为添加
+        return request({
+            url:'/admin/product/baseTrademark/save',
+            method:'POST',
+            data:tradeMark
+        })
+    }
+}
