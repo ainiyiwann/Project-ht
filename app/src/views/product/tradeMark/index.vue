@@ -1,10 +1,7 @@
 <template>
   <div>
     <!-- 按钮 -->
-    <el-button
-      type="primary"
-      icon="el-icon-plus"
-      @click="showDialog"
+    <el-button type="primary" icon="el-icon-plus" @click="showDialog"
       >添加</el-button
     >
     <!-- 表格 
@@ -78,21 +75,27 @@
     <!-- 对话框 -->
     <!-- title：设置标题的
          visible.sync:控制对话框显示与隐藏的 -->
-    <el-dialog :title="tmForm.id?'修改品牌':'添加品牌'" :visible.sync="dialogFormVisible">
+    <el-dialog
+      :title="tmForm.id ? '修改品牌' : '添加品牌'"
+      :visible.sync="dialogFormVisible"
+    >
       <!-- 表单 -->
-      <!-- model：把表单里的数据收集到一个对象上，当进行表单验证时也需要这个属性 -->
-      <el-form :model="tmForm" style="width: 80%">
+      <!-- model：把表单里的数据收集到一个对象上，当进行表单验证时也需要这个属性 
+           roule：表单验证的规则
+           ref:作为表单验证的-->
+      <!-- Form 组件提供了表单验证的功能，只需要通过 rules 属性传入约定的验证规则，并将 Form-Item 的 prop 属性设置为需校验的字段名即可 -->
+      <el-form :model="tmForm" :rules="rules" ref="ruleForm" style="width: 80%">
         <!-- label:设置显示的名称
              label-width:设置label标题宽度 -->
-        <el-form-item label="品牌名称" label-width="100px">
+        <el-form-item label="品牌名称" label-width="100px" prop="tmName">
           <el-input autocomplete="off" v-model="tmForm.tmName"></el-input>
         </el-form-item>
-        <el-form-item label="名称LOGO" label-width="100px">
+        <el-form-item label="名称LOGO" label-width="100px" prop="logoUrl">
           <!-- 上传图片 -->
           <!--on-success：图片上传成功之后的回调
             before-upload：图片上传之前的回调 
             action:设置图片上传的地址-->
-            <!-- 这里收集图片数据不能用v-model -->
+          <!-- 这里收集图片数据不能用v-model -->
           <el-upload
             class="avatar-uploader"
             action="/dev-api/admin/product/fileUpload"
@@ -102,7 +105,9 @@
           >
             <img v-if="tmForm.logoUrl" :src="tmForm.logoUrl" class="avatar" />
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过2MB</div>
+            <div slot="tip" class="el-upload__tip">
+              只能上传jpg/png文件，且不超过2MB
+            </div>
           </el-upload>
         </el-form-item>
       </el-form>
@@ -134,13 +139,24 @@ export default {
       //上传图片使用的属性
       // imageUrl: "",
       //收集品牌的信息
-      tmForm:{
+      tmForm: {
         //品牌的名字
-        tmName:'',
+        tmName: "",
         //品牌的图片
-        logoUrl:''
-
-      }
+        logoUrl: "",
+      },
+      //表单验证的规则
+      rules: {
+        //品牌名称的验证规则
+        tmName: [
+          //requered:必须要输入 message：未输入使得提示信息 trigger:在什么行为下进行触发（一般有：blur：失焦;change）
+          { required: true, message: "请输入活动名称", trigger: "blur" },
+          //min:最小输入字符 max：最大输入字符 message:为符合得提示信息
+          {min: 2,max: 10,message: "长度在 2 到 10 个字符",trigger: "change",},
+        ],
+        //品牌logo的验证规则
+        logoUrl: [{ required: true, message: "请选择品牌图片" }],
+      },
     };
   },
   methods: {
@@ -172,7 +188,7 @@ export default {
     handleAvatarSuccess(res, file) {
       //收集图片数据
       // this.imageUrl = URL.createObjectURL(file.raw);
-      this.tmForm.logoUrl = res.data
+      this.tmForm.logoUrl = res.data;
     },
     //图片上传之前
     beforeAvatarUpload(file) {
@@ -188,39 +204,50 @@ export default {
       return isJPG && isLt2M;
     },
     //点击添加按钮时
-    showDialog(){
+    showDialog() {
       //显示对话框
-      this.dialogFormVisible = true
+      this.dialogFormVisible = true;
       //清除对话框的数据
-      this.tmForm = {tmName:'',logoUrl:''}
+      this.tmForm = { tmName: "", logoUrl: "" };
     },
     //点击对话框的确定按钮（进行添加或修改服务器中的数据）
-    async addOrUpdateTradeMark(){
-      this.dialogFormVisible = false
-      //发请求
-      let result = await this.$API.trademark.reqAddOrUpdateTradeMark(this.tmForm)
-      console.log(result)
-      if(result.code==200){
-        //弹出添加成功或修改成功提示
-        //$messge是elementUI的
-        this.$message({
-          type:'success',
-          message:this.tmForm.id?'修改品牌成功':'添加品牌成功'
-        })
-        //添加或修改成功后会从新获取列表进行展示
-        //如果是添加品牌留着第一页，如果是修改品牌就留在当前页
-        this.getPageList(this.tmForm.id?this.page:1)
-      }
+    addOrUpdateTradeMark() {
+      //当全部得表单验证通过里，才进行下一步
+      //validate是验证表单的
+      this.$refs.ruleForm.validate(async (success) => {
+        if (success) {
+          this.dialogFormVisible = false;
+          //发请求
+          let result = await this.$API.trademark.reqAddOrUpdateTradeMark(
+            this.tmForm
+          );
+          console.log(result);
+          if (result.code == 200) {
+            //弹出添加成功或修改成功提示
+            //$messge是elementUI的
+            this.$message({
+              type: "success",
+              message: this.tmForm.id ? "修改品牌成功" : "添加品牌成功",
+            });
+            //添加或修改成功后会从新获取列表进行展示
+            //如果是添加品牌留着第一页，如果是修改品牌就留在当前页
+            this.getPageList(this.tmForm.id ? this.page : 1);
+          }
+        }else{
+          console.log('erro submit')
+          return false
+        }
+      });
     },
     //点击表格中的修改时
     //row:当前选中的品牌的信息
-    updateTradeMark(row){
-      console.log(row)
-      this.dialogFormVisible = true
+    updateTradeMark(row) {
+      console.log(row);
+      this.dialogFormVisible = true;
       //将已有的信息赋值给tmForm
       //用浅拷贝继续赋值不会直接该网页的信息
-      this.tmForm = {...row}
-    }
+      this.tmForm = { ...row };
+    },
   },
   mounted() {
     this.getPageList();
