@@ -44,7 +44,7 @@
             @click="updateTradeMark(row)"
             >修改</el-button
           >
-          <el-button type="danger" class="el-icon-delete" size="mini"
+          <el-button type="danger" class="el-icon-delete" size="mini" @click="deleteTrademark(row)"
             >删除</el-button
           >
         </template>
@@ -221,7 +221,7 @@ export default {
           let result = await this.$API.trademark.reqAddOrUpdateTradeMark(
             this.tmForm
           );
-          console.log(result);
+          // console.log(result);
           if (result.code == 200) {
             //弹出添加成功或修改成功提示
             //$messge是elementUI的
@@ -242,16 +242,50 @@ export default {
     //点击表格中的修改时
     //row:当前选中的品牌的信息
     updateTradeMark(row) {
-      console.log(row);
+      // console.log(row);
       this.dialogFormVisible = true;
       //将已有的信息赋值给tmForm
       //用浅拷贝继续赋值不会直接该网页的信息
       this.tmForm = { ...row };
     },
+    deleteTrademark(row){
+      //弹窗
+       this.$confirm(`你确定删除${row.tmName}`, '删除', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(async () => {
+          //用户点击确定按钮的时候会触发
+          //向服务器发请求
+          let result = await this.$API.trademark.reqDeleteTrademark(row.id)
+          // console.log(result)
+          //如果删除成功
+          if(result.code==200){
+            //弹窗删除成功
+            this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+          //重写发送请求获取数据展示
+           if(this.list.length==1){
+             this.page -= 1
+             this.getPageList()
+           }else{
+             this.getPageList()
+           }
+       
+          }
+        }).catch(() => {
+          //用户点击取消按钮时
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+    }
   },
   mounted() {
     this.getPageList();
-    console.log(this.$API);
   },
 };
 </script>/getPageList
