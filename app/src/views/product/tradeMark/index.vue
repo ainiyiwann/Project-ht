@@ -1,9 +1,7 @@
 <template>
   <div>
     <!-- 按钮 -->
-    <el-button type="primary" icon="el-icon-plus" @click="showDialog"
-      >添加</el-button
-    >
+    <el-button type="primary" icon="el-icon-plus" @click="showDialog">添加</el-button>
     <!-- 表格 
          data:表格组件要展示的数据（数组）
          border:是否有标签
@@ -18,35 +16,17 @@
             prop:对应列内容的字段名-->
       <el-table-column type="index" label="序号" width="80px" align="center">
       </el-table-column>
-      <el-table-column
-        prop="tmName"
-        label="品牌名称"
-        width="width"
-        align="center"
-      >
+      <el-table-column prop="tmName" label="品牌名称" width="width" align="center">
       </el-table-column>
-      <el-table-column
-        prop="logoUrl"
-        label="品牌LOGO"
-        width="width"
-        align="center"
-      >
+      <el-table-column prop="logoUrl" label="品牌LOGO" width="width" align="center">
         <template slot-scope="{ row, $index }">
           <img :src="row.logoUrl" style="width: 100px; height: 100px" />
         </template>
       </el-table-column>
       <el-table-column prop="prop" label="操作" width="width" align="center">
         <template slot-scope="{ row, $index }">
-          <el-button
-            type="warning"
-            class="el-icon-edit"
-            size="mini"
-            @click="updateTradeMark(row)"
-            >修改</el-button
-          >
-          <el-button type="danger" class="el-icon-delete" size="mini" @click="deleteTrademark(row)"
-            >删除</el-button
-          >
+          <el-button type="warning" class="el-icon-edit" size="mini" @click="updateTradeMark(row)">修改</el-button>
+          <el-button type="danger" class="el-icon-delete" size="mini" @click="deleteTrademark(row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -60,25 +40,14 @@
          @current-change:当前按钮改变时会触发
          @size-change:改变一页展示的数据条数是会触发
          -->
-    <el-pagination
-      :current-page="page"
-      :total="total"
-      :page-size="limit"
-      :pager-count="7"
-      :page-sizes="[3, 5, 10]"
-      layout="prev, pager, next, jumper,->, sizes, total"
-      @current-change="handleCurrentChange"
-      @size-change="handlesizeChange"
-      style="margin-top: 20px; textAlign: center"
-    >
+    <el-pagination :current-page="page" :total="total" :page-size="limit" :pager-count="7" :page-sizes="[3, 5, 10]"
+      layout="prev, pager, next, jumper,->, sizes, total" @current-change="handleCurrentChange"
+      @size-change="handlesizeChange" style="margin-top: 20px; textAlign: center">
     </el-pagination>
     <!-- 对话框 -->
     <!-- title：设置标题的
          visible.sync:控制对话框显示与隐藏的 -->
-    <el-dialog
-      :title="tmForm.id ? '修改品牌' : '添加品牌'"
-      :visible.sync="dialogFormVisible"
-    >
+    <el-dialog :title="tmForm.id ? '修改品牌' : '添加品牌'" :visible.sync="dialogFormVisible">
       <!-- 表单 -->
       <!-- model：把表单里的数据收集到一个对象上，当进行表单验证时也需要这个属性 
            roule：表单验证的规则
@@ -96,13 +65,8 @@
             before-upload：图片上传之前的回调 
             action:设置图片上传的地址-->
           <!-- 这里收集图片数据不能用v-model -->
-          <el-upload
-            class="avatar-uploader"
-            action="/dev-api/admin/product/fileUpload"
-            :show-file-list="false"
-            :on-success="handleAvatarSuccess"
-            :before-upload="beforeAvatarUpload"
-          >
+          <el-upload class="avatar-uploader" action="/dev-api/admin/product/fileUpload" :show-file-list="false"
+            :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
             <img v-if="tmForm.logoUrl" :src="tmForm.logoUrl" class="avatar" />
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             <div slot="tip" class="el-upload__tip">
@@ -113,9 +77,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addOrUpdateTradeMark"
-          >确 定</el-button
-        >
+        <el-button type="primary" @click="addOrUpdateTradeMark">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -127,7 +89,7 @@ export default {
   data() {
     return {
       //分页器第几页
-      page: 1,
+      page: 2,
       //当前页数展示数据的条数
       limit: 3,
       //一共的数据条数
@@ -152,7 +114,7 @@ export default {
           //requered:必须要输入 message：未输入使得提示信息 trigger:在什么行为下进行触发（一般有：blur：失焦;change）
           { required: true, message: "请输入活动名称", trigger: "blur" },
           //min:最小输入字符 max：最大输入字符 message:为符合得提示信息
-          {min: 2,max: 10,message: "长度在 2 到 10 个字符",trigger: "change",},
+          { min: 2, max: 10, message: "长度在 2 到 10 个字符", trigger: "change", },
         ],
         //品牌logo的验证规则
         logoUrl: [{ required: true, message: "请选择品牌图片" }],
@@ -233,7 +195,7 @@ export default {
             //如果是添加品牌留着第一页，如果是修改品牌就留在当前页
             this.getPageList(this.tmForm.id ? this.page : 1);
           }
-        }else{
+        } else {
           console.log('erro submit')
           return false
         }
@@ -248,40 +210,40 @@ export default {
       //用浅拷贝继续赋值不会直接该网页的信息
       this.tmForm = { ...row };
     },
-    deleteTrademark(row){
+    deleteTrademark(row) {
       //弹窗
-       this.$confirm(`你确定删除${row.tmName}`, '删除', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(async () => {
-          //用户点击确定按钮的时候会触发
-          //向服务器发请求
-          let result = await this.$API.trademark.reqDeleteTrademark(row.id)
-          // console.log(result)
-          //如果删除成功
-          if(result.code==200){
-            //弹窗删除成功
-            this.$message({
+      this.$confirm(`你确定删除${row.tmName}`, '删除', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        //用户点击确定按钮的时候会触发
+        //向服务器发请求
+        let result = await this.$API.trademark.reqDeleteTrademark(row.id)
+        // console.log(result)
+        //如果删除成功
+        if (result.code == 200) {
+          //弹窗删除成功
+          this.$message({
             type: 'success',
             message: '删除成功!'
           });
           //重写发送请求获取数据展示
-           if(this.list.length==1){
-             this.page -= 1
-             this.getPageList()
-           }else{
-             this.getPageList()
-           }
-       
+          if (this.list.length == 1) {
+            this.page -= 1
+            this.getPageList()
+          } else {
+            this.getPageList()
           }
-        }).catch(() => {
-          //用户点击取消按钮时
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });          
+
+        }
+      }).catch(() => {
+        //用户点击取消按钮时
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
         });
+      });
     }
   },
   mounted() {
@@ -297,9 +259,11 @@ export default {
   position: relative;
   overflow: hidden;
 }
+
 .avatar-uploader .el-upload:hover {
   border-color: #409eff;
 }
+
 .avatar-uploader-icon {
   font-size: 28px;
   color: #8c939d;
@@ -308,6 +272,7 @@ export default {
   line-height: 178px;
   text-align: center;
 }
+
 .avatar {
   width: 178px;
   height: 178px;

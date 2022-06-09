@@ -280,9 +280,6 @@ export default {
       }
     }
   },
-  mounted() {
-    console.log(this.$API);
-  },
 };
 </script>
 

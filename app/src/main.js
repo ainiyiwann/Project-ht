@@ -11,6 +11,8 @@ import '@/icons' // icon
 import '@/permission' // permission control
 //引入三级联动组件
 import CategorySelect from '@/components/CategorySelect'
+import HintButton from '@/components/HintButton'
+Vue.component(HintButton.name,HintButton)
 //注册三级联动为全局组件
 Vue.component(CategorySelect.name,CategorySelect)
 /**
