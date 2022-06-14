@@ -31,7 +31,7 @@
                     <el-col :span="6">
                         <div class="sale-right">
                             <h3>门店{{ tightTitle }}排名</h3>
-                            <ul>
+                            <ul v-if="activeName == 'sale'">
                                 <li>
                                     <span class="span1">1</span>
                                     <span class="span2">肯德基</span>
@@ -39,33 +39,38 @@
                                 </li>
                                 <li>
                                     <span class="span1">2</span>
-                                    <span class="span2">麦当劳</span>
-                                    <span>2422-6335</span>
+                                    <span class="span2">肯德基</span>
+                                    <span>2344-3432</span>
                                 </li>
                                 <li>
                                     <span class="span1">3</span>
-                                    <span class="span2">必胜客</span>
-                                    <span>3434-2343</span>
+                                    <span class="span2">肯德基</span>
+                                    <span>2344-3432</span>
                                 </li>
                                 <li>
                                     <span class="span3">4</span>
-                                    <span class="span2">德克士</span>
-                                    <span>5345-3454</span>
+                                    <span class="span2">肯德基</span>
+                                    <span>2344-3432</span>
                                 </li>
                                 <li>
                                     <span class="span3">5</span>
-                                    <span class="span2">华莱士</span>
-                                    <span>2844-3467</span>
+                                    <span class="span2">肯德基</span>
+                                    <span>2344-3432</span>
                                 </li>
                                 <li>
                                     <span class="span3">6</span>
-                                    <span class="span2">真功夫</span>
-                                    <span>3422-3432</span>
+                                    <span class="span2">肯德基</span>
+                                    <span>2344-3432</span>
                                 </li>
                                 <li>
                                     <span class="span3">7</span>
-                                    <span class="span2">汉堡王</span>
-                                    <span>2432-3439</span>
+                                    <span class="span2">肯德基</span>
+                                    <span>2344-3432</span>
+                                </li>
+                                <li>
+                                    <span class="span3">8</span>
+                                    <span class="span2">肯德基</span>
+                                    <span>2344-3432</span>
                                 </li>
                             </ul>
                         </div>
@@ -80,6 +85,7 @@
 //引入echarts
 import * as echarts from 'echarts'
 import dayjs from 'dayjs'
+import { mapState } from 'vuex'
 export default {
     data() {
         return {
@@ -113,7 +119,7 @@ export default {
                 xAxis: [
                     {
                         type: 'category',
-                        data: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+                        data: [],
                         axisTick: {
                             alignWithLabel: true
                         }
@@ -129,7 +135,7 @@ export default {
                         name: 'Direct',
                         type: 'bar',
                         barWidth: '60%',
-                        data: [10, 52, 200, 334, 390, 330, 220, 356, 234, 146, 456, 367],
+                        data: [],
                         color: "#99CC99"
                     }
                 ]
@@ -143,7 +149,10 @@ export default {
             } else {
                 return '访问量'
             }
-        }
+        },
+        ...mapState({
+            listState: state => state.home.list
+        })
     },
     watch: {
         tightTitle() {
@@ -153,6 +162,68 @@ export default {
                     title: {
                         text: `${this.tightTitle}的趋势`
                     },
+                    xAxis: [
+                        {
+                            type: 'category',
+                            data: this.tightTitle == "销售额" ? this.listState.data.orderFullYearAxis : this.listState.data.userFullYearAxis,
+                            axisTick: {
+                                alignWithLabel: true
+                            }
+                        }
+                    ],
+                    series: [
+                        {
+                            name: 'Direct',
+                            type: 'bar',
+                            barWidth: '60%',
+                            data: this.tightTitle == "访问量" ? this.listState.data.userFullYear : this.listState.data.orderFullYear,
+                            color: "#99CC99"
+                        }
+                    ]
+                }
+            )
+        },
+        listState() {
+            this.myCharts.setOption(
+                {
+                    title: {
+                        text: '销售额趋势'
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'shadow'
+                        }
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis: [
+                        {
+                            type: 'category',
+                            data: this.listState.data.orderFullYearAxis,
+                            axisTick: {
+                                alignWithLabel: true
+                            }
+                        }
+                    ],
+                    yAxis: [
+                        {
+                            type: 'value'
+                        }
+                    ],
+                    series: [
+                        {
+                            name: 'Direct',
+                            type: 'bar',
+                            barWidth: '60%',
+                            data: this.listState.data.userFullYear,
+                            color: "#99CC99"
+                        }
+                    ]
                 }
             )
         }
@@ -170,12 +241,12 @@ export default {
         setMonth() {
             const month = dayjs().startOf('month').format('YYYY-MM-DD')
             const month2 = dayjs().endOf('month').format('YYYY-MM-DD')
-            this.data = [month,month2]
+            this.data = [month, month2]
         },
-        setYear(){
+        setYear() {
             const year = dayjs().startOf('year').format('YYYY-MM-DD')
             const year1 = dayjs().endOf('year').format('YYYY-MM-DD')
-            this.data = [year,year1]
+            this.data = [year, year1]
         }
     },
 }
