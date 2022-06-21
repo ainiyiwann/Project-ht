@@ -24,26 +24,28 @@ import Layout from '@/layout'
     activeMenu: '/example/list'  if set path, the sidebar will highlight the path you set
   }
  */
-
 /**
  * constantRoutes
  * a base page that does not have permission requirements
  * all roles can be accessed
  */
+//不同路由不同角色可以看就使不一样的，所以要对路由进行拆分
+//常量路由：每个账户都能看到的路由
 export const constantRoutes = [
+  //登录
   {
     path: '/login',
     //用路由懒加载
     component: () => import('@/views/login/index'),
     hidden: true
   },
-
+  //404
   {
     path: '/404',
     component: () => import('@/views/404'),
     hidden: true
   },
-
+  //首页
   {
     path: '/',
     component: Layout,
@@ -56,42 +58,116 @@ export const constantRoutes = [
       meta: { title: '首页', icon: 'dashboard' }
     }]
   },
+
+]
+//异步路由：不同的账户有不同的权限，可以设置所能访问的组件不同
+export const asyncRoutes = [
+  //权限管理
   {
-    path:'/product',
-    component:Layout,
-    name:'Product',
-    meta:{title:'商品管理',icon:'el-icon-goods'},
-    children:[
+    name: 'Acl',
+    path: '/acl',
+    component: Layout,
+    redirect: '/acl/user/list',
+    meta: {
+      title: '权限管理',
+      icon: 'el-icon-lock'
+    },
+    children: [
       {
-        path:'tradeMark',
-        name:'TradeMark',
-        component: ()=>import('@/views/product/tradeMark'),
-        meta:{title:'品牌管理'}
+        name: 'User',
+        path: 'user/list',
+        component: () => import('@/views/acl/user/list'),
+        meta: {
+          title: '用户管理',
+        },
       },
       {
-        path:'attr',
-        name:'Attr',
-        component: ()=>import('@/views/product/attr'),
-        meta:{title:'平台属性管理'}
+        name: 'Role',
+        path: 'role/list',
+        component: () => import('@/views/acl/role/list'),
+        meta: {
+          title: '角色管理',
+        },
       },
       {
-        path:'spu',
-        name:'Spu',
-        component: ()=>import('@/views/product/spu'),
-        meta:{title:'Spu管理'}
+        name: 'RoleAuth',
+        path: 'role/auth/:id',
+        component: () => import('@/views/acl/role/roleAuth'),
+        meta: {
+          activeMenu: '/acl/role/list',
+          title: '角色授权',
+        },
+        hidden: true,
       },
       {
-        path:'sku',
-        name:'Sku',
-        component: ()=>import('@/views/product/sku'),
-        meta:{title:'Sku管理'}
+        name: 'Permission',
+        path: 'permission/list',
+        component: () => import('@/views/acl/permission/list'),
+        meta: {
+          title: '菜单管理',
+        },
       },
     ]
   },
-
-  // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true }
+  //商品管理
+  {
+    path: '/product',
+    component: Layout,
+    name: 'Product',
+    meta: { title: '商品管理', icon: 'el-icon-goods' },
+    children: [
+      {
+        path: 'tradeMark',
+        name: 'TradeMark',
+        component: () => import('@/views/product/tradeMark'),
+        meta: { title: '品牌管理' }
+      },
+      {
+        path: 'attr',
+        name: 'Attr',
+        component: () => import('@/views/product/attr'),
+        meta: { title: '平台属性管理' }
+      },
+      {
+        path: 'spu',
+        name: 'Spu',
+        component: () => import('@/views/product/spu'),
+        meta: { title: 'Spu管理' }
+      },
+      {
+        path: 'sku',
+        name: 'Sku',
+        component: () => import('@/views/product/sku'),
+        meta: { title: 'Sku管理' }
+      },
+    ]
+  },
+  {
+    path: '/test',
+    component: Layout,
+    name: 'Test',
+    meta: { title: '测试管理', icon: 'el-icon-goods' },
+    children: [
+      {
+        path: 'test1',
+        name: 'Test1',
+        component: () => import('@/views/Test/Test1'),
+        meta: { title: '测试管理1' }
+      },
+      {
+        path: 'test2',
+        name: 'Test2',
+        component: () => import('@/views/Test/Test2'),
+        meta: { title: '测试管理2' }
+      },
+    ]
+  },
 ]
+//任意路由：路由加载失败的时候重定向到404
+export const anyRoutes = {
+  // 404页面必须放在最后!!
+  path: '*', redirect: '/404', hidden: true
+}
 
 const createRouter = () => new Router({
   // mode: 'history', // require service support
