@@ -47,6 +47,8 @@ const mutations = {
   // }
   //存储用户信息
   SET_USERINFO: (state, userInfo) => {
+    //用户名
+    state.name = userInfo.name
     //用户头像
     state.avatar = userInfo.avatar
     //菜单权限标记

@@ -118,7 +118,7 @@ export const asyncRoutes = [
     children: [
       {
         path: 'tradeMark',
-        name: 'TradeMark',
+        name: 'Trademark',
         component: () => import('@/views/product/tradeMark'),
         meta: { title: '品牌管理' }
       },
